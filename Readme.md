@@ -6,6 +6,8 @@ Brief Description
 =
 This project is based on the template for js-mocha.
 
+https://github.com/emilybache/GildedRose-Refactoring-Kata/tree/master/js-mocha
+
 Instructions
 =
 You need Node.js instance to be able to execute the tests.
