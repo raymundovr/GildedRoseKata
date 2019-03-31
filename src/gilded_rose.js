@@ -6,13 +6,16 @@ class Item {
   }
 }
 
+const ItemNames = {
+  BRIE: 'Aged Brie',
+  SULFURAS: 'Sulfuras, Hand of Ragnaros',
+  BACKSTAGE_PASSES: 'Backstage passes to a TAFKAL80ETC concert',
+  CONJURED: 'Conjured'
+};
+
 class Shop {
   constructor(items=[]){
     this.items = items;
-    this.BRIE = 'Aged Brie';
-    this.SULFURAS = 'Sulfuras, Hand of Ragnaros';
-    this.BACKSTAGE_PASSES = 'Backstage passes to a TAFKAL80ETC concert';
-    this.CONJURED = 'Conjured';
   }
 
   /**
@@ -20,8 +23,8 @@ class Shop {
    * @param item
    * @returns {boolean}
    */
-  canBeSold(item) {
-    return item.name !== this.SULFURAS;
+  static canBeSold(item) {
+    return item.name !== ItemNames.SULFURAS;
   }
 
   /**
@@ -29,8 +32,8 @@ class Shop {
    * @param item
    * @returns {boolean}
    */
-  qualityShouldBeDecreased(item) {
-    return item.name !== this.BRIE && item.name !== this.BACKSTAGE_PASSES;
+  static qualityShouldBeDecreased(item) {
+    return item.name !== ItemNames.BRIE && item.name !== ItemNames.BACKSTAGE_PASSES;
   }
 
   /**
@@ -38,10 +41,10 @@ class Shop {
    * @param item
    * @returns {*|number}
    */
-  decreaseItemQuality(item) {
+  static decreaseItemQuality(item) {
     let quality = item.quality;
     if (quality > 0) {
-      if (item.name === this.CONJURED || item.sellIn < 0) {
+      if (item.name === ItemNames.CONJURED || item.sellIn < 0) {
         //Quality for this items decreases twice as normal
         quality = Math.max(0, quality - 2);
       } else {
@@ -56,13 +59,13 @@ class Shop {
    * @param item
    * @returns {*}
    */
-  increaseItemQuality(item) {
+  static increaseItemQuality(item) {
     let quality = item.quality;
     if (quality < 50) {
       quality++;
-      if (item.name === this.BRIE) {
+      if (item.name === ItemNames.BRIE) {
         if (item.sellIn < 0 && quality < 50) quality++;
-      } else if(item.name === this.BACKSTAGE_PASSES) {
+      } else if(item.name === ItemNames.BACKSTAGE_PASSES) {
         //Immediately return 0 if date has passed
         if (item.sellIn < 0) return 0;
 
@@ -87,12 +90,12 @@ class Shop {
   updateQuality() {
     this.items.forEach(item => {
       //If the item can be sold and the quality is in the boundaries we can operate on it
-      if (this.canBeSold(item)) {
+      if (Shop.canBeSold(item)) {
         //Depending on the item we can increase or decrease the quality
-        if (this.qualityShouldBeDecreased(item)) {
-          item.quality = this.decreaseItemQuality(item);
+        if (Shop.qualityShouldBeDecreased(item)) {
+          item.quality = Shop.decreaseItemQuality(item);
         } else {
-          item.quality = this.increaseItemQuality(item);
+          item.quality = Shop.increaseItemQuality(item);
         }
         //Finally decrease the days count
         item.sellIn = item.sellIn - 1;
