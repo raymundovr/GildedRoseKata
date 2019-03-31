@@ -125,13 +125,13 @@ describe("The behavior for Conjured items", () => {
       new Item("Conjured", 10, 10)
     ]);
     const items = gildedRose.updateQuality();
-    expect(items[0].sellIn).to.equal(8);
-  })
+    expect(items[0].quality).to.equal(8);
+  });
   it("Should never decrease in quality to less than 0", () => {
     const gildedRose = new Shop([
       new Item("Conjured", 10, 1)
     ]);
     const items = gildedRose.updateQuality();
-    expect(items[0].sellIn).to.equal(0);
-  })
+    expect(items[0].quality).to.equal(0);
+  });
 });
