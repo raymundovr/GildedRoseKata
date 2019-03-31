@@ -38,6 +38,9 @@ class Shop {
       if (item.name === this.BRIE) {
         if (item.sellIn <= 0 && quality < 50) quality++;
       } else if(item.name === this.BACKSTAGE_PASSES) {
+        //Automatically set to 0 if the date has passed
+        if (item.sellIn <= 0) return 0;
+
         if (item.sellIn < 11 && item.quality < 50) {
           quality++;
         }
@@ -69,16 +72,15 @@ class Shop {
           item.quality = this.increaseItemQuality(item);
         }
 
-
         if (item.sellIn < 0) {
           if (item.name !== this.BRIE) {
             if (item.name !== this.BACKSTAGE_PASSES) {
               if (item.quality > 0) {
                 item.quality = item.quality - 1;
               }
-            } else {
+            }/* else {
               item.quality = item.quality - item.quality;
-            }
+            }*/
           }
         }
       }
