@@ -17,7 +17,7 @@ describe("The default behavior", () => {
     expect(items[0].quality).to.equal(0);
   });
   it("Should decrease the quality of a generic item twice as fast once the Sell By Date has passed", () => {
-    const gildedRose = new Shop([new Item("foo", 0, 40)]);
+    const gildedRose = new Shop([new Item("foo", -1, 40)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).to.equal(38);
   });
@@ -42,7 +42,7 @@ describe("The behavior for 'Aged Brie'", () => {
   });
   it("Should increase by two the quality when the sell by date has passed", () => {
     const gildedRose = new Shop([
-      new Item("Aged Brie", 0, 42)
+      new Item("Aged Brie", -1, 42)
     ]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).to.equal(44);
@@ -87,7 +87,7 @@ describe("The behavior for 'Backstage passes'", () => {
   });
   it("Should decrease the quality to 0 when the the sell by date passes", () => {
     const gildedRose = new Shop([
-      new Item('Backstage passes to a TAFKAL80ETC concert', 0, 49)
+      new Item('Backstage passes to a TAFKAL80ETC concert', -1, 49)
     ]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).to.equal(0);
@@ -116,5 +116,22 @@ describe("The behavior for Sulfuras", () => {
     expect(items[0].sellIn).to.equal(-1);
     expect(items[1].sellIn).to.equal(5);
     expect(items[2].sellIn).to.equal(10);
+  })
+});
+
+describe("The behavior for Conjured items", () => {
+  it("Should decrease in quality twice as fast as normal items", () => {
+    const gildedRose = new Shop([
+      new Item("Conjured", 10, 10)
+    ]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].sellIn).to.equal(8);
+  })
+  it("Should never decrease in quality to less than 0", () => {
+    const gildedRose = new Shop([
+      new Item("Conjured", 10, 1)
+    ]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].sellIn).to.equal(0);
   })
 });

@@ -11,7 +11,8 @@ class Shop {
     this.items = items;
     this.BRIE = 'Aged Brie';
     this.SULFURAS = 'Sulfuras, Hand of Ragnaros';
-    this.BACKSTAGE_PASSES = 'Backstage passes to a TAFKAL80ETC concert'
+    this.BACKSTAGE_PASSES = 'Backstage passes to a TAFKAL80ETC concert';
+    this.CONJURED = 'Conjured';
   }
 
   /**
@@ -28,7 +29,12 @@ class Shop {
   }
 
   decreaseItemQuality(item) {
-    return item.quality > 0 ? item.quality - 1 : 0;
+    let quality = item.quality;
+    if (quality > 0) {
+      quality--;
+      if (item.sellIn < 0) quality--;
+    }
+    return quality;
   }
 
   increaseItemQuality(item) {
@@ -36,15 +42,15 @@ class Shop {
     if (quality < 50) {
       quality++;
       if (item.name === this.BRIE) {
-        if (item.sellIn <= 0 && quality < 50) quality++;
+        if (item.sellIn < 0 && quality < 50) quality++;
       } else if(item.name === this.BACKSTAGE_PASSES) {
-        //Automatically set to 0 if the date has passed
-        if (item.sellIn <= 0) return 0;
+        //Immediately return 0 if date has passed
+        if (item.sellIn < 0) return 0;
 
-        if (item.sellIn < 11 && item.quality < 50) {
+        if (item.sellIn <= 10 && quality < 50) {
           quality++;
         }
-        if (item.sellIn < 6 && item.quality < 50) {
+        if (item.sellIn <= 5 && quality < 50) {
           quality++;
         }
       }
@@ -63,26 +69,14 @@ class Shop {
     this.items.forEach(item => {
       //If the item can be sold and the quality is in the boundaries we can operate on it
       if (this.canBeSold(item)) {
-        //Immediately decrease the soldIn days count
-        item.sellIn = item.sellIn - 1;
         //Depending on the item we can increase or decrease the quality
         if (this.qualityShouldBeDecreased(item)) {
-            item.quality = this.decreaseItemQuality(item);
+          item.quality = this.decreaseItemQuality(item);
         } else {
           item.quality = this.increaseItemQuality(item);
         }
-
-        if (item.sellIn < 0) {
-          if (item.name !== this.BRIE) {
-            if (item.name !== this.BACKSTAGE_PASSES) {
-              if (item.quality > 0) {
-                item.quality = item.quality - 1;
-              }
-            }/* else {
-              item.quality = item.quality - item.quality;
-            }*/
-          }
-        }
+        //Finally decrease the days count
+        item.sellIn = item.sellIn - 1;
       }
     });
 
