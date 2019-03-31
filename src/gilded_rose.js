@@ -31,11 +31,11 @@ class Shop {
   decreaseItemQuality(item) {
     let quality = item.quality;
     if (quality > 0) {
-      if (item.name === this.CONJURED) {
+      if (item.name === this.CONJURED || item.sellIn < 0) {
+        //Quality for this items decreases twice as normal
         quality = Math.max(0, quality - 2);
       } else {
         quality--;
-        if (item.sellIn < 0 && quality > 0) quality--;
       }
     }
     return quality;
