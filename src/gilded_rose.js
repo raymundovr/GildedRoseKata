@@ -23,13 +23,31 @@ class Shop {
     return item.name !== this.SULFURAS;
   }
 
-  /**
-   * Determines is the quality can still be updated
-   * @param item
-   * @returns {boolean}
-   */
-  canQualityBeUpdated(item) {
-    return item.quality >= 0 && item.quality <= 50;
+  qualityShouldBeDecreased(item) {
+    return item.name !== this.BRIE && item.name !== this.BACKSTAGE_PASSES;
+  }
+
+  decreaseItemQuality(item) {
+    return item.quality > 0 ? item.quality - 1 : 0;
+  }
+
+  increaseItemQuality(item) {
+    let quality = item.quality;
+    if (quality < 50) {
+      quality++;
+      if (item.name === this.BRIE) {
+        if (item.sellIn <= 0 && quality < 50) quality++;
+      } else if(item.name === this.BACKSTAGE_PASSES) {
+        if (item.sellIn < 11 && item.quality < 50) {
+          quality++;
+        }
+        if (item.sellIn < 6 && item.quality < 50) {
+          quality++;
+        }
+      }
+    }
+
+    return quality;
   }
 
   /**
@@ -40,30 +58,17 @@ class Shop {
    */
   updateQuality() {
     this.items.forEach(item => {
+      //If the item can be sold and the quality is in the boundaries we can operate on it
       if (this.canBeSold(item)) {
-        if (item.name !== this.BRIE && item.name !== this.BACKSTAGE_PASSES) {
-          if (item.quality > 0) {
-            item.quality = item.quality - 1;
-          }
+        //Immediately decrease the soldIn days count
+        item.sellIn = item.sellIn - 1;
+        //Depending on the item we can increase or decrease the quality
+        if (this.qualityShouldBeDecreased(item)) {
+            item.quality = this.decreaseItemQuality(item);
         } else {
-          if (item.quality < 50) {
-            item.quality = item.quality + 1;
-            if (item.name === this.BACKSTAGE_PASSES) {
-              if (item.sellIn < 11) {
-                if (item.quality < 50) {
-                  item.quality = item.quality + 1;
-                }
-              }
-              if (item.sellIn < 6) {
-                if (item.quality < 50) {
-                  item.quality = item.quality + 1;
-                }
-              }
-            }
-          }
+          item.quality = this.increaseItemQuality(item);
         }
 
-        item.sellIn = item.sellIn - 1;
 
         if (item.sellIn < 0) {
           if (item.name !== this.BRIE) {
@@ -73,10 +78,6 @@ class Shop {
               }
             } else {
               item.quality = item.quality - item.quality;
-            }
-          } else {
-            if (item.quality < 50) {
-              item.quality = item.quality + 1;
             }
           }
         }
