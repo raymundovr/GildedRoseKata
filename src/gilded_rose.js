@@ -24,10 +24,20 @@ class Shop {
     return item.name !== this.SULFURAS;
   }
 
+  /**
+   * Determines whether the item should or not decrease in quality
+   * @param item
+   * @returns {boolean}
+   */
   qualityShouldBeDecreased(item) {
     return item.name !== this.BRIE && item.name !== this.BACKSTAGE_PASSES;
   }
 
+  /**
+   * Performs the quality decrease based on item properties
+   * @param item
+   * @returns {*|number}
+   */
   decreaseItemQuality(item) {
     let quality = item.quality;
     if (quality > 0) {
@@ -41,6 +51,11 @@ class Shop {
     return quality;
   }
 
+  /**
+   * Performs the quality increase based in item properties
+   * @param item
+   * @returns {*}
+   */
   increaseItemQuality(item) {
     let quality = item.quality;
     if (quality < 50) {
